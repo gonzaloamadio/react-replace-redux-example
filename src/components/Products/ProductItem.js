@@ -4,9 +4,10 @@ import Card from '../UI/Card';
 import { useStore } from '../../hooks-store/store';
 import './ProductItem.css';
 
-const ProductItem = props => {
+const ProductItem = React.memo(props => {
   // we are only interested in the dispatch function.
-  const dispatch = useStore()[1];
+  // So we set to false the arg of useState (shouldListen=false)
+  const dispatch = useStore(false)[1];
 
   const toggleFavHandler = () => {
     // toggleFav(props.id);
@@ -27,6 +28,6 @@ const ProductItem = props => {
       </div>
     </Card>
   );
-};
+});
 
 export default ProductItem;

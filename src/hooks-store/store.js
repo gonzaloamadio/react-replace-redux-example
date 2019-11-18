@@ -12,7 +12,9 @@ let listeners = [];
 let actions = {};
 
 // With custom hook, we share logic. And with variables defined outside we share data.
-export const useStore = () => {
+// shouldListen, to optimize, if we want to register a listener or not. For example
+// if we have a component that only dispatchs, we do not want to render on state changes.
+export const useStore = (shouldListen = true) => {
 
   // We are only interested in setState, because this will make the component that uses
   // this hook, to re-render.
@@ -38,13 +40,17 @@ export const useStore = () => {
     // will get its own setState function, that is then added to the listeners array.
     // So more components will add, the bigger is listeners.
     // We register one listener per component.
-    listeners.push(setState);
+    if (shouldListen) {
+      listeners.push(setState);
+    }
 
     // Clean that setState pointer of listeners when component is unmounted.
     return () => {
-      listeners = listeners.filter(li => li !== setState);
+      if (shouldListen) {
+        listeners = listeners.filter(li => li !== setState);
+      }
     };
-  }, [setState]);
+  }, [setState, shouldListen]);
 
   return [globalState, dispatch];
 };
